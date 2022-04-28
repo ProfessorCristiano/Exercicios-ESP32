@@ -1,0 +1,27 @@
+#https://wokwi.com/projects/317326649857147457
+# Professor Cristiano Teixeira
+# Sob Licença Apache 2.0
+print("INICIO")
+import machine, time
+from machine import Pin
+
+while True:
+  echo_timeout = echo_timeout=500*2*30
+  trigger = Pin(02, Pin.OUT, pull=None)
+  echo = Pin(04, Pin.IN, pull=None)
+  trigger.value(0) 
+  # Aguarda 5 milisegundos.
+  time.sleep_us(5)
+  trigger.value(1)
+  # Aguarda 10 milisegundos.
+  time.sleep_us(10)
+  trigger.value(0)
+  try:
+    pulse_time = machine.time_pulse_us(echo, 1, echo_timeout)
+  except OSError as ex:
+    if ex.args[0] == 110: # 110 = ETIMEDOUT
+      raise OSError('Out of range')
+    raise ex  
+  
+  cms = (pulse_time / 2) / 29.1
+  print ("Distância: ",cms, "cms")
